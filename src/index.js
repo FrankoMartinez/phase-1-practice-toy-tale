@@ -11,5 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       toyFormContainer.style.display = "none";
     }
-  });
+  })
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('http://localhost:3000/toys')
+  .then(res => res.json())
+  .then(e => {
+      console.log(e)
+      let cardDiv = document.createElement('div')
+      let classCard = cardDiv.className = 'card'
+      document.querySelector('#toy-collection').append()
+    })
+  })

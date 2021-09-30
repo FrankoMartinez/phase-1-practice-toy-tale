@@ -17,10 +17,89 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener('DOMContentLoaded', () => {
   fetch('http://localhost:3000/toys')
   .then(res => res.json())
-  .then(e => {
-      console.log(e)
-      let cardDiv = document.createElement('div')
-      let classCard = cardDiv.className = 'card'
-      document.querySelector('#toy-collection').append()
+  .then(toys => {
+      toys.forEach(toy => {
+        let cardDiv = document.createElement('div')
+        let h2 = document.createElement('h2')
+        let img = document.createElement('img')
+        let p = document.createElement('p')
+        let button = document.createElement('button')
+
+        cardDiv.className = 'card'
+        h2.innerText = toy.name
+        img.src = toy.image
+        img.className = "toy-avatar"
+        p.innerText = toy.likes + " Likes"
+        button.id = toy.id
+        button.className = 'like-btn'
+        button.innerText = "Like <3" 
+        
+        cardDiv.append(h2, img, p, button)
+      document.querySelector('#toy-collection').append(cardDiv)
+      })
+      clickListener()
     })
   })
+
+document.querySelector(".add-toy-form").addEventListener('submit', (e) => {
+    e.preventDefault()
+    fetch('http://localhost:3000/toys', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'accept': 'application/json',
+    },
+    body: JSON.stringify({
+      "name": e.target.name.value,
+      "image": e.target.image.value,
+      "likes": 0
+    })
+  })
+  .then(res => res.json())
+  .then(toyData => appendToy(toyData))
+    function appendToy(resJson) {
+      let cardDiv = document.createElement('div')
+      let h2 = document.createElement('h2')
+      let img = document.createElement('img')
+      let p = document.createElement('p')
+      let button = document.createElement('button')
+
+      cardDiv.className = 'card'
+      h2.innerText = resJson.name
+      img.src = resJson.image
+      img.className = "toy-avatar"
+      p.innerText = resJson.likes + " Likes"
+      button.id = resJson.id
+      button.className = 'like-btn'
+      button.innerText = "Like <3"
+      cardDiv.append(h2, img, p, button)
+
+  document.querySelector('#toy-collection').append(cardDiv)
+    }
+})
+
+function clickListener() {
+  const likeButtons = document.querySelectorAll('.like-btn')
+  for (const button of likeButtons){
+  button.addEventListener('click', (e) => {
+    const newNum = e.currentTarget.parentNode.querySelector('p').innerText.split(" ")[0]
+    let likes = e.currentTarget.parentNode.querySelector('p').innerText
+    e.preventDefault()
+    fetch(`http://localhost:3000/toys/${e.currentTarget.id}`, {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json',
+        accept: 'application/json'
+      },
+      body: JSON.stringify({
+        'likes': parseInt(newNum) + 1
+      })
+    })
+    .then(res => res.json())
+      .then(like => {
+        console.log(likes)
+        likes = `${like.likes} Likes`
+      })
+    })
+  } 
+} 

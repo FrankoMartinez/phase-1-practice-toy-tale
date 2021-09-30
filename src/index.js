@@ -82,9 +82,10 @@ function clickListener() {
   const likeButtons = document.querySelectorAll('.like-btn')
   for (const button of likeButtons){
   button.addEventListener('click', (e) => {
-    const newNum = e.currentTarget.parentNode.querySelector('p').innerText.split(" ")[0]
-    let likes = e.currentTarget.parentNode.querySelector('p').innerText
+    const newNum = parseInt(e.currentTarget.parentNode.querySelector('p').innerText.split(" ")[0]) + 1
+    let likes = e.currentTarget.parentNode.querySelector('p')
     e.preventDefault()
+    // debugger
     fetch(`http://localhost:3000/toys/${e.currentTarget.id}`, {
       method: "PATCH",
       headers: {
@@ -92,13 +93,13 @@ function clickListener() {
         accept: 'application/json'
       },
       body: JSON.stringify({
-        'likes': parseInt(newNum) + 1
+        'likes': newNum
       })
     })
     .then(res => res.json())
       .then(like => {
-        console.log(likes)
-        likes = `${like.likes} Likes`
+        console.log(like)
+        likes.innerText = `${like.likes} Likes`
       })
     })
   } 
